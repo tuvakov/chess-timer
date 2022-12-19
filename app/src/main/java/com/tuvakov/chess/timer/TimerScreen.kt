@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.StopCircle
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -22,28 +23,47 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun TimerScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: MainViewModel
 ) {
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         Column(modifier = Modifier.fillMaxSize()) {
+
+            val whitePlayerTimer = viewModel.whitePlayerTimer.collectAsState(initial = "")
+            val blackPlayerTimer = viewModel.blackPlayerTimer.collectAsState(initial = "")
+
             TimerHalf(
                 modifier = Modifier
                     .weight(0.5f)
                     .background(color = Color.Magenta.copy(alpha = 0.5f))
                     .rotate(180f),
-                time = "20:00",
-                onClick = {}
+                time = whitePlayerTimer.value,
+                onClick = {
+                    viewModel.changePlayer(0)
+                }
             )
             TimerHalf(
                 modifier = Modifier
                     .weight(0.5f)
                     .background(color = Color.Red.copy(alpha = 0.5f)),
-                time = "10:59",
-                onClick = {}
+                time = blackPlayerTimer.value,
+                onClick = {
+                    viewModel.changePlayer(1)
+                }
             )
         }
 
-        Buttons(onClick = {})
+        Buttons(
+            onClick = { action ->
+                val state = when (action) {
+                    ButtonAction.START -> 1
+                    ButtonAction.PAUSE -> 2
+                    ButtonAction.RESUME -> 1
+                    ButtonAction.STOP -> 3
+                }
+                viewModel.setGameState(state)
+            }
+        )
     }
 }
 
@@ -73,7 +93,8 @@ private fun Buttons(
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(
-            onClick = { /*TODO*/ }) {
+            onClick = { onClick(ButtonAction.START) }
+        ) {
             Icon(
                 modifier = Modifier.size(70.dp),
                 imageVector = Icons.Rounded.PlayArrow,
@@ -82,7 +103,8 @@ private fun Buttons(
         }
         Spacer(modifier = modifier.size(12.dp))
         IconButton(
-            onClick = { /*TODO*/ }) {
+            onClick = { onClick(ButtonAction.PAUSE) }
+        ) {
             Icon(
                 modifier = Modifier.size(50.dp),
                 imageVector = Icons.Rounded.StopCircle,
