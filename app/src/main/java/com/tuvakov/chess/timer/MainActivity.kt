@@ -25,10 +25,11 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     color = MaterialTheme.colors.background
                 ) {
-                    TimerScreen(
-                        modifier = Modifier.fillMaxSize(),
-                        viewModel
-                    )
+//                    TimerScreen(
+//                        modifier = Modifier.fillMaxSize(),
+//                        viewModel
+//                    )
+                    MainScreen(modifier = Modifier.fillMaxSize())
                 }
             }
         }
