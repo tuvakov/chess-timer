@@ -1,5 +1,6 @@
 package com.tuvakov.chess.timer
 
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -16,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 
 // NOTE: Maybe one tone gradient that fades towards the middle would be great?
@@ -79,7 +81,28 @@ private fun TimerHalf(
             .clickable { onClick() },
         contentAlignment = Alignment.Center
     ) {
-        Text(text = time, style = MaterialTheme.typography.h3)
+        AnimatedTimeText(time = time)
+    }
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+private fun AnimatedTimeText(
+    modifier: Modifier = Modifier,
+    time: String,
+    style: TextStyle = MaterialTheme.typography.h3
+) {
+    Row(modifier = modifier) {
+        for (idx in time.indices) {
+            AnimatedContent(
+                targetState = time[idx],
+                transitionSpec = {
+                    slideInVertically { it } with slideOutVertically { -it }
+                }
+            ) {
+                Text(text = time[idx].toString(), style = style)
+            }
+        }
     }
 }
 
